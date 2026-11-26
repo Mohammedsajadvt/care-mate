@@ -8,19 +8,35 @@ SECRET_KEY = os.environ.get(
     'django-insecure-caremate-local-dev-key-change-in-production',
 )
 
-DEBUG = os.environ.get('DJANGO_DEBUG', 'True').lower() in ('1', 'true', 'yes')
+IS_VERCEL = bool(os.environ.get('VERCEL'))
+
+DEBUG = os.environ.get('DJANGO_DEBUG', 'False' if IS_VERCEL else 'True').lower() in (
+    '1',
+    'true',
+    'yes',
+)
 
 ALLOWED_HOSTS = [
     h.strip()
-    for h in os.environ.get('DJANGO_ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
+    for h in os.environ.get(
+        'DJANGO_ALLOWED_HOSTS',
+        '127.0.0.1,localhost,.vercel.app',
+    ).split(',')
     if h.strip()
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     o.strip()
-    for o in os.environ.get('DJANGO_CSRF_TRUSTED_ORIGINS', '').split(',')
+    for o in os.environ.get(
+        'DJANGO_CSRF_TRUSTED_ORIGINS',
+        'https://*.vercel.app',
+    ).split(',')
     if o.strip()
 ]
+if os.environ.get('VERCEL_URL'):
+    vercel_origin = f"https://{os.environ['VERCEL_URL']}"
+    if vercel_origin not in CSRF_TRUSTED_ORIGINS:
+        CSRF_TRUSTED_ORIGINS.append(vercel_origin)
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -62,6 +78,13 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'caremate_project.wsgi.application'
 
+DB_OPTIONS = {
+    'charset': 'utf8mb4',
+    'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+}
+if os.environ.get('CAREMATE_DB_SSL', '').lower() in ('1', 'true', 'yes'):
+    DB_OPTIONS['ssl'] = {}
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -70,10 +93,7 @@ DATABASES = {
         'PASSWORD': os.environ.get('CAREMATE_DB_PASSWORD', ''),
         'HOST': os.environ.get('CAREMATE_DB_HOST', '127.0.0.1'),
         'PORT': os.environ.get('CAREMATE_DB_PORT', '3306'),
-        'OPTIONS': {
-            'charset': 'utf8mb4',
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-        },
+        'OPTIONS': DB_OPTIONS,
     }
 }
 
@@ -92,6 +112,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+WHITENOISE_USE_FINDERS = True
 STORAGES = {
     'default': {
         'BACKEND': 'django.core.files.storage.FileSystemStorage',
