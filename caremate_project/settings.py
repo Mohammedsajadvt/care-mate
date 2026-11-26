@@ -83,7 +83,7 @@ DB_OPTIONS = {
     'charset': 'utf8mb4',
     'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
 }
-if os.environ.get('CAREMATE_DB_SSL', '').lower() in ('1', 'true', 'yes'):
+if os.environ.get('CAREMATE_DB_SSL', 'True' if IS_VERCEL else 'False').lower() in ('1', 'true', 'yes'):
     DB_OPTIONS['ssl'] = {'ca': certifi.where()}
 
 DATABASES = {
