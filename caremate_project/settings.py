@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+import certifi
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -83,7 +84,7 @@ DB_OPTIONS = {
     'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
 }
 if os.environ.get('CAREMATE_DB_SSL', '').lower() in ('1', 'true', 'yes'):
-    DB_OPTIONS['ssl'] = {}
+    DB_OPTIONS['ssl'] = {'ca': certifi.where()}
 
 DATABASES = {
     'default': {
