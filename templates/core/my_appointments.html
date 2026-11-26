@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}My Bookings — CareMate{% endblock %}
+
+{% block content %}
+<section class="cm-section" style="min-height: calc(100vh - 160px);">
+  <div class="cm-section-head">
+    <h1 class="cm-section-title">My Appointments</h1>
+    <p class="cm-section-sub">Manage your upcoming and past doctor visits stored in CareMate MySQL.</p>
+  </div>
+
+  {% if appointments %}
+    <div class="cm-appt-list">
+      {% for appt in appointments %}
+        <div class="cm-appt-item">
+          <div style="display:flex; align-items:center; gap:16px;">
+            <img src="{% static appt.doctor.avatar %}" alt="{{ appt.doctor.name }}" style="width:56px; height:56px; border-radius:50%; object-fit:cover;" />
+            <div>
+              <h3 style="margin:0 0 4px; font-size:17px;">{{ appt.doctor.name }}</h3>
+              <p style="margin:0; font-size:13px; color:#717673;">
+                {{ appt.doctor.specialty }} &bull; {{ appt.appointment_date|date:"D, d M Y" }} at <strong>{{ appt.time_slot }}</strong>
+              </p>
+              {% if appt.reason %}
+                <p style="margin:4px 0 0; font-size:12px; color:#5c615e;">Reason: {{ appt.reason }}</p>
+              {% endif %}
+            </div>
+          </div>
+
+          <div style="display:flex; align-items:center; gap:12px;">
+            <span class="cm-status-pill {% if appt.status == 'cancelled' %}cm-status-cancelled{% else %}cm-status-confirmed{% endif %}">
+              {{ appt.status }}
+            </span>
+            {% if appt.status == 'confirmed' %}
+              <form method="post" action="{% url 'cancel_appointment' appt.id %}" style="margin:0;">
+                {% csrf_token %}
+                <button type="submit" class="cm-btn-outline" style="height:36px; padding:0 14px;">Cancel</button>
+              </form>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div style="text-align:center; padding:48px 20px; background:#f6f9f7; border-radius:12px;">
+      <p style="margin:0 0 16px; color:#717673;">You have no appointments booked yet.</p>
+      <a href="{% url 'appointments' %}" class="cm-btn-primary">Browse Doctors</a>
+    </div>
+  {% endif %}
+</section>
+{% endblock %}

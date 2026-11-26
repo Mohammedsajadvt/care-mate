@@ -1,0 +1,540 @@
+/* CareMate Admin Theme — reuses client tokens from caremate.css */
+:root,
+html[data-theme="light"],
+html[data-theme="dark"] {
+  --primary: var(--cm-green);
+  --secondary: var(--cm-green-hover);
+  --accent: #ffffff;
+  --primary-fg: #ffffff;
+
+  --body-fg: var(--cm-dark);
+  --body-bg: #ffffff;
+  --body-quiet-color: var(--cm-gray);
+  --body-loud-color: var(--cm-dark);
+
+  --header-color: var(--cm-dark);
+  --header-bg: #ffffff;
+  --header-link-color: var(--cm-gray);
+  --header-branding-color: var(--cm-dark);
+
+  --breadcrumbs-fg: var(--cm-gray);
+  --breadcrumbs-link-fg: var(--cm-green);
+  --breadcrumbs-bg: var(--cm-card-sage);
+
+  --link-fg: var(--cm-green);
+  --link-hover-color: var(--cm-green-hover);
+  --link-selected-fg: var(--cm-green);
+
+  --hairline-color: var(--cm-border);
+  --border-color: #dce1de;
+
+  --error-fg: #b91c1c;
+  --message-success-bg: #ebf5ee;
+  --message-warning-bg: #fef3c7;
+  --message-error-bg: #fef2f2;
+
+  --darkened-bg: var(--cm-card-sage);
+  --selected-bg: #ebf5ee;
+  --selected-row: #ebf5ee;
+
+  --button-fg: #ffffff;
+  --button-bg: var(--cm-green);
+  --button-hover-bg: var(--cm-green-hover);
+  --default-button-bg: var(--cm-green);
+  --default-button-hover-bg: var(--cm-green-hover);
+  --close-button-bg: var(--cm-tan);
+  --close-button-hover-bg: var(--cm-tan-hover);
+  --delete-button-bg: #b91c1c;
+  --delete-button-hover-bg: #991b1b;
+
+  --object-tools-fg: #ffffff;
+  --object-tools-bg: var(--cm-green);
+  --object-tools-hover-bg: var(--cm-green-hover);
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #ffffff;
+  color: var(--cm-dark);
+}
+
+#container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main {
+  flex: 1 0 auto;
+}
+
+/* CareMate-styled Admin Navbar */
+#header.cm-admin-header {
+  min-height: 76px;
+  height: auto;
+  background: #ffffff;
+  border-bottom: 1px solid #f0f2f0;
+  padding: 12px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  white-space: nowrap;
+}
+
+#header.cm-admin-header a:link,
+#header.cm-admin-header a:visited {
+  color: inherit;
+}
+
+.cm-admin-nav-left {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  min-width: 0;
+}
+
+.cm-admin-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: #ebf5ee;
+  color: var(--cm-green);
+  font-size: 11px;
+  font-weight: 600;
+  margin-left: 6px;
+}
+
+.cm-admin-links {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.cm-admin-links a.cm-nav-link {
+  font-size: 13px;
+  color: var(--cm-gray);
+  font-weight: 500;
+}
+
+.cm-admin-links a.cm-nav-link:hover,
+.cm-admin-links a.cm-nav-link.active {
+  color: var(--cm-green);
+  font-weight: 600;
+}
+
+.cm-admin-userbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+#header.cm-admin-header #logout-form button.cm-btn-primary {
+  background: var(--cm-green) !important;
+  color: #ffffff !important;
+  border: none !important;
+  border-radius: 6px !important;
+  height: 36px;
+  padding: 0 18px;
+  font-size: 13px;
+  font-weight: 500;
+  text-transform: none;
+  cursor: pointer;
+}
+
+#header.cm-admin-header #logout-form button.cm-btn-primary:hover {
+  background: var(--cm-green-hover) !important;
+}
+
+.cm-admin-user-pill {
+  font-size: 12px;
+  color: var(--cm-gray);
+  background: var(--cm-card-sage);
+  border: 1px solid var(--cm-border);
+  padding: 6px 12px;
+  border-radius: 999px;
+}
+
+/* Breadcrumbs */
+div.breadcrumbs {
+  background: var(--cm-card-sage);
+  border-bottom: 1px solid var(--cm-border);
+  padding: 10px 36px;
+  font-size: 12px;
+  color: var(--cm-gray);
+}
+
+div.breadcrumbs a {
+  color: var(--cm-green);
+  font-weight: 600;
+}
+
+/* Content area */
+#content {
+  padding: 28px 36px 40px;
+}
+
+#content > h1 {
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--cm-dark);
+  letter-spacing: -0.02em;
+  margin-bottom: 20px;
+}
+
+/* Sidebar */
+#nav-sidebar {
+  background: var(--cm-card-sage);
+  border-right: 1px solid var(--cm-border);
+}
+
+#nav-filter {
+  background: #ffffff;
+  border: 1px solid #dce1de;
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 13px;
+}
+
+#nav-sidebar .module {
+  background: #ffffff;
+  border: 1px solid var(--cm-border);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+#nav-sidebar .module caption,
+.module h2,
+.module caption,
+.module caption a:link,
+.module caption a:visited,
+#nav-sidebar .module caption a:link,
+#nav-sidebar .module caption a:visited {
+  background: var(--cm-green);
+  color: #ffffff !important;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 10px 14px;
+}
+
+.module caption a:link,
+.module caption a:visited,
+#nav-sidebar .module caption a:link,
+#nav-sidebar .module caption a:visited {
+  padding: 0;
+}
+
+#nav-sidebar .current-model {
+  background: #ebf5ee;
+}
+
+#nav-sidebar .current-model a {
+  color: var(--cm-green);
+  font-weight: 600;
+}
+
+.toggle-nav-sidebar {
+  background: var(--cm-card-sage);
+  border-right: 1px solid var(--cm-border);
+  color: var(--cm-green);
+}
+
+/* Changelist Toolbar, Filter & Table Cards */
+#changelist {
+  gap: 20px;
+}
+
+#changelist #toolbar {
+  background: var(--cm-card-sage);
+  border: 1px solid var(--cm-border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+}
+
+#changelist #toolbar form input[type="text"] {
+  border: 1px solid #dce1de;
+  border-radius: 6px;
+  padding: 7px 12px;
+  font-size: 13px;
+  height: 36px;
+}
+
+#changelist #toolbar form input[type="submit"] {
+  background: var(--cm-green);
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 0 16px;
+  height: 36px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+#changelist #toolbar form input[type="submit"]:hover {
+  background: var(--cm-green-hover);
+}
+
+#changelist .actions {
+  background: #ffffff;
+  border: 1px solid var(--cm-border);
+  border-radius: 10px 10px 0 0;
+  padding: 12px 16px;
+}
+
+#changelist .results {
+  background: #ffffff;
+  border: 1px solid var(--cm-border);
+  border-top: none;
+  border-radius: 0 0 10px 10px;
+  overflow-x: auto;
+}
+
+#result_list thead th {
+  background: var(--cm-card-sage);
+  color: var(--cm-dark);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--cm-border);
+}
+
+#result_list tbody td,
+#result_list tbody th {
+  padding: 12px 14px;
+  font-size: 13px;
+  border-bottom: 1px solid #f0f2f0;
+  vertical-align: middle;
+}
+
+#result_list tbody tr:hover {
+  background: #f8fbf9;
+}
+
+#changelist-filter {
+  background: #ffffff;
+  border: 1px solid var(--cm-border);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+}
+
+#changelist-filter h2 {
+  background: var(--cm-green);
+  color: #ffffff;
+  padding: 11px 14px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+#changelist-filter li.selected a {
+  color: var(--cm-green);
+  font-weight: 600;
+}
+
+/* Object tools (+ Add Appointment) & Submit rows */
+.object-tools a:link,
+.object-tools a:visited {
+  border-radius: 6px;
+  background: var(--cm-green);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 8px 16px;
+}
+
+.object-tools a:hover {
+  background: var(--cm-green-hover);
+}
+
+.button,
+input[type="submit"],
+input[type="button"],
+.submit-row input {
+  border-radius: 6px;
+  font-weight: 500;
+  padding: 10px 18px;
+}
+
+.submit-row {
+  background: var(--cm-card-sage);
+  border: 1px solid var(--cm-border);
+  border-radius: 10px;
+  padding: 14px 18px;
+}
+
+fieldset.module {
+  background: #ffffff;
+  border: 1px solid var(--cm-border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.form-row {
+  border-bottom: 1px solid #f0f2f0;
+  padding: 14px 16px;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="number"],
+input[type="url"],
+input[type="date"],
+select,
+textarea {
+  border-radius: 6px;
+  border: 1px solid #dce1de;
+  padding: 8px 10px;
+}
+
+/* Admin Dashboard Hero & Cards (reusing CareMate visual language) */
+.cm-admin-hero {
+  background: var(--cm-green);
+  color: #ffffff;
+  border-radius: 14px;
+  padding: 32px 36px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.cm-admin-hero h1 {
+  margin: 0 0 8px;
+  font-size: 30px;
+  font-weight: 500;
+  color: #ffffff;
+}
+
+.cm-admin-hero p {
+  margin: 0;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.8);
+  max-width: 540px;
+}
+
+.cm-admin-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+  margin-bottom: 28px;
+}
+
+.cm-admin-stat-card {
+  background: var(--cm-card-sage);
+  border: 1px solid #ebf0ec;
+  border-radius: 12px;
+  padding: 20px 22px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.cm-admin-stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(30, 77, 43, 0.06);
+}
+
+.cm-admin-stat-label {
+  font-size: 12px;
+  color: var(--cm-gray);
+  margin-bottom: 6px;
+}
+
+.cm-admin-stat-val {
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--cm-green);
+  margin-bottom: 10px;
+}
+
+.cm-admin-stat-link {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--cm-dark);
+}
+
+.dashboard #content {
+  max-width: 1320px;
+  margin: 0 auto;
+}
+
+.dashboard .module {
+  border-radius: 12px;
+  border: 1px solid var(--cm-border);
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+}
+
+/* Status pills inside Django Admin tables */
+.cm-pill {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+.cm-pill-confirmed { background: #ebf5ee; color: #1e4d2b; }
+.cm-pill-completed { background: #e0f2fe; color: #0369a1; }
+.cm-pill-cancelled { background: #f3f4f4; color: #6b7280; }
+
+/* Admin Login overrides */
+body.login {
+  background: #ffffff;
+}
+body.login #content {
+  padding: 0;
+}
+.cm-auth-card .cm-input-wrap input {
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  padding: 0 !important;
+  height: auto !important;
+}
+
+@media (max-width: 1180px) {
+  .cm-admin-links {
+    display: none;
+  }
+  .dashboard #content.colMS {
+    margin-right: 0 !important;
+  }
+  .dashboard #content-related {
+    float: none !important;
+    width: auto !important;
+    margin-right: 0 !important;
+    margin-top: 24px;
+  }
+}
+
+@media (max-width: 960px) {
+  .cm-admin-user-pill {
+    display: none;
+  }
+  .cm-admin-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  #header.cm-admin-header,
+  div.breadcrumbs,
+  #content {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  .cm-admin-stats {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,275 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Appointments — CareMate{% endblock %}
+
+{% block content %}
+<section class="cm-hero">
+  <div class="cm-hero-left">
+    <div class="cm-hero-content">
+      <h1 class="cm-hero-title">Book Your Next<br>Doctor Visit in<br>Seconds.</h1>
+      <p class="cm-hero-subtitle">
+        CareMate helps you find the best healthcare provider by specialty, location, and more, ensuring you get the care you need.
+      </p>
+    </div>
+  </div>
+  <div class="cm-hero-right">
+    <img src="{% static 'images/hero_appointments.jpg' %}" alt="Doctor consulting with patient" />
+  </div>
+</section>
+
+<div class="cm-filter-wrap">
+  <div class="cm-filter-card">
+    <h2 class="cm-filter-title">Find a doctor at your own ease</h2>
+    <form method="get" action="{% url 'appointments' %}" class="cm-filter-row">
+      <div class="cm-filter-group">
+        <label class="cm-filter-label" for="f_specialty">Specialty</label>
+        <div class="cm-filter-control">
+          <span class="cm-input-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M4.8 2.3A.3.3 0 1 0 5 2H4a2 2 0 0 0-2 2v5a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6V4a2 2 0 0 0-2-2h-1a.2.2 0 1 0 .3.3"/>
+              <path d="M8 15v1a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6v-4"/>
+              <circle cx="20" cy="10" r="2"/>
+            </svg>
+          </span>
+          <select id="f_specialty" name="specialty">
+            <option value="All" {% if selected_specialty == 'All' %}selected{% endif %}>All</option>
+            {% for sp in specialties %}
+              <option value="{{ sp }}" {% if selected_specialty == sp %}selected{% endif %}>{{ sp }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <div class="cm-filter-group">
+        <label class="cm-filter-label" for="f_rating">Rating</label>
+        <div class="cm-filter-control">
+          <span class="cm-input-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="#6b7280">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+            </svg>
+          </span>
+          <select id="f_rating" name="rating">
+            <option value="All" {% if selected_rating == 'All' %}selected{% endif %}>All</option>
+            <option value="5" {% if selected_rating == '5' %}selected{% endif %}>5</option>
+            <option value="4" {% if selected_rating == '4' %}selected{% endif %}>4+</option>
+            <option value="3" {% if selected_rating == '3' %}selected{% endif %}>3+</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="cm-filter-group">
+        <label class="cm-filter-label" for="f_experience">Experience</label>
+        <div class="cm-filter-control">
+          <span class="cm-input-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M5 22h14"/>
+              <path d="M5 2h14"/>
+              <path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"/>
+              <path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"/>
+            </svg>
+          </span>
+          <select id="f_experience" name="experience">
+            <option value="All" {% if selected_experience == 'All' %}selected{% endif %}>All</option>
+            <option value="2-10" {% if selected_experience == '2-10' %}selected{% endif %}>2-10 years</option>
+            <option value="0-2" {% if selected_experience == '0-2' %}selected{% endif %}>0-2 years</option>
+            <option value="10+" {% if selected_experience == '10+' %}selected{% endif %}>10+ years</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="cm-filter-group">
+        <label class="cm-filter-label" for="f_fee">Booking Fee</label>
+        <div class="cm-filter-control">
+          <span class="cm-input-icon">$</span>
+          <select id="f_fee" name="booking_fee">
+            <option value="All" {% if selected_booking_fee == 'All' %}selected{% endif %}>All</option>
+            <option value="No" {% if selected_booking_fee == 'No' %}selected{% endif %}>No</option>
+            <option value="Yes" {% if selected_booking_fee == 'Yes' %}selected{% endif %}>Yes</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="cm-filter-buttons">
+        <button type="submit" class="cm-btn-primary">Search</button>
+        <a href="{% url 'appointments' %}" class="cm-btn-tan">Reset</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<section class="cm-section">
+  <div class="cm-section-head">
+    <h2 class="cm-section-title">{{ total_doctors }} doctor{{ total_doctors|pluralize }} available</h2>
+    <p class="cm-section-sub">Book appointments with minimum wait-time &amp; verified doctor details</p>
+  </div>
+
+  {% if page_obj.object_list %}
+    <div class="cm-doctors-grid">
+      {% for doc in page_obj.object_list %}
+        <article class="cm-doctor-card">
+          <img class="cm-avatar" src="{% static doc.avatar %}" alt="{{ doc.name }}" />
+          <h3 class="cm-doctor-name">{{ doc.name }}</h3>
+          <div class="cm-meta-row">
+            <span class="cm-meta-item">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M4.8 2.3A.3.3 0 1 0 5 2H4a2 2 0 0 0-2 2v5a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6V4a2 2 0 0 0-2-2h-1a.2.2 0 1 0 .3.3"/>
+                <path d="M8 15v1a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6v-4"/>
+                <circle cx="20" cy="10" r="2"/>
+              </svg>
+              {{ doc.specialty }}
+            </span>
+            <span class="cm-meta-item">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M5 22h14"/><path d="M5 2h14"/>
+                <path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"/>
+                <path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"/>
+              </svg>
+              {{ doc.experience_years }} Year{{ doc.experience_years|pluralize }}
+            </span>
+          </div>
+
+          <div class="cm-ratings-row">
+            <span>Ratings:</span>
+            {% include "core/_stars.html" with filled=doc.rating|floatformat:0|add:"0" %}
+          </div>
+
+          {% if user.is_authenticated %}
+            <button
+              type="button"
+              class="cm-book-btn"
+              onclick="openBookingModal('{{ doc.id }}', '{{ doc.name|escapejs }}', '{{ doc.specialty|escapejs }}', '{{ doc.location|escapejs }}')"
+            >
+              Book Appointment
+            </button>
+          {% else %}
+            <a href="{% url 'login' %}?next={% url 'appointments' %}" class="cm-book-btn" style="display:inline-flex; align-items:center; justify-content:center;">
+              Book Appointment
+            </a>
+          {% endif %}
+        </article>
+      {% endfor %}
+    </div>
+
+    <div class="cm-pagination">
+      <a class="cm-page-nav {% if not page_obj.has_previous %}disabled{% endif %}"
+         href="{% if page_obj.has_previous %}?page={{ page_obj.previous_page_number }}&specialty={{ selected_specialty }}&rating={{ selected_rating }}&experience={{ selected_experience }}&booking_fee={{ selected_booking_fee }}{% else %}#{% endif %}">
+        &lsaquo; Prev
+      </a>
+      {% for num in page_obj.paginator.page_range %}
+        <a class="cm-page-link {% if page_obj.number == num %}active{% endif %}"
+           href="?page={{ num }}&specialty={{ selected_specialty }}&rating={{ selected_rating }}&experience={{ selected_experience }}&booking_fee={{ selected_booking_fee }}">
+          {{ num }}
+        </a>
+      {% endfor %}
+      <a class="cm-page-nav {% if not page_obj.has_next %}disabled{% endif %}"
+         href="{% if page_obj.has_next %}?page={{ page_obj.next_page_number }}&specialty={{ selected_specialty }}&rating={{ selected_rating }}&experience={{ selected_experience }}&booking_fee={{ selected_booking_fee }}{% else %}#{% endif %}">
+        Next &rsaquo;
+      </a>
+    </div>
+  {% else %}
+    <div style="text-align:center; padding: 48px 20px; background:#f7faf8; border-radius:12px;">
+      <p style="margin:0 0 14px; font-size:16px;">No doctors matched your filter criteria.</p>
+      <a href="{% url 'appointments' %}" class="cm-btn-primary">Show All Doctors</a>
+    </div>
+  {% endif %}
+</section>
+
+<!-- Interactive Booking Modal -->
+<div id="bookingModal" class="cm-modal-backdrop" onclick="if(event.target===this)closeBookingModal()">
+  <div class="cm-modal">
+    <div class="cm-modal-header">
+      <div>
+        <h2 class="cm-modal-title" id="modalDoctorName">Book Appointment</h2>
+        <p id="modalDoctorMeta" style="margin:4px 0 0; font-size:13px; color:#717673;"></p>
+      </div>
+      <button type="button" class="cm-modal-close" onclick="closeBookingModal()">&times;</button>
+    </div>
+
+    <form method="post" action="{% url 'book_appointment' %}">
+      {% csrf_token %}
+      <input type="hidden" name="doctor_id" id="modalDoctorId" />
+      <input type="hidden" name="time_slot" id="modalTimeSlot" required />
+
+      <div class="cm-field">
+        <label class="cm-field-label" for="modalDate">Select Date</label>
+        <div class="cm-input-wrap">
+          <input type="date" id="modalDate" name="appointment_date" min="{{ today_iso }}" value="{{ today_iso }}" required onchange="refreshBookedSlots()" />
+        </div>
+      </div>
+
+      <div class="cm-field">
+        <label class="cm-field-label">Select Available Time Slot</label>
+        <div class="cm-slots-grid" id="slotsGrid">
+          {% for slot in time_slots %}
+            <button type="button" class="cm-slot-chip" data-slot="{{ slot }}" onclick="selectSlot(this)">{{ slot }}</button>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="cm-field">
+        <label class="cm-field-label" for="modalReason">Reason for Visit (optional)</label>
+        <textarea id="modalReason" name="reason" rows="2" placeholder="Routine checkup, dental pain, consultation..." style="width:100%; border:1px solid #e2e5e3; border-radius:6px; padding:10px; font-size:13px; outline:none;"></textarea>
+      </div>
+
+      <div style="display:flex; gap:10px; margin-top:16px;">
+        <button type="submit" class="cm-btn-primary" style="flex:1; height:44px;" onclick="return validateBookingSubmit()">Confirm Booking</button>
+        <button type="button" class="cm-btn-tan" style="height:44px;" onclick="closeBookingModal()">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let currentDoctorId = null;
+
+function openBookingModal(doctorId, name, specialty, location) {
+  currentDoctorId = doctorId;
+  document.getElementById('modalDoctorId').value = doctorId;
+  document.getElementById('modalDoctorName').textContent = 'Book with ' + name;
+  document.getElementById('modalDoctorMeta').textContent = specialty + ' • ' + location;
+  document.getElementById('modalTimeSlot').value = '';
+  document.getElementById('bookingModal').classList.add('open');
+  refreshBookedSlots();
+}
+
+function closeBookingModal() {
+  document.getElementById('bookingModal').classList.remove('open');
+}
+
+function selectSlot(btn) {
+  if (btn.classList.contains('booked')) return;
+  document.querySelectorAll('.cm-slot-chip').forEach(el => el.classList.remove('selected'));
+  btn.classList.add('selected');
+  document.getElementById('modalTimeSlot').value = btn.dataset.slot;
+}
+
+function validateBookingSubmit() {
+  if (!document.getElementById('modalTimeSlot').value) {
+    alert('Please select an available time slot.');
+    return false;
+  }
+  return true;
+}
+
+async function refreshBookedSlots() {
+  if (!currentDoctorId) return;
+  const dateVal = document.getElementById('modalDate').value;
+  document.getElementById('modalTimeSlot').value = '';
+  const resp = await fetch(`{% url 'available_slots' %}?doctor_id=${encodeURIComponent(currentDoctorId)}&date=${encodeURIComponent(dateVal)}`);
+  const data = await resp.json();
+  const booked = new Set(data.booked_slots || []);
+  document.querySelectorAll('.cm-slot-chip').forEach(btn => {
+    btn.classList.remove('selected', 'booked');
+    if (booked.has(btn.dataset.slot)) {
+      btn.classList.add('booked');
+      btn.disabled = true;
+    } else {
+      btn.disabled = false;
+    }
+  });
+}
+</script>
+{% endblock %}

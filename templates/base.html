@@ -1,0 +1,65 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}CareMate{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{% static 'css/caremate.css' %}" />
+</head>
+<body>
+  <header class="cm-navbar">
+    <div class="cm-navbar-inner">
+      <div class="cm-brand-group">
+        {% url 'landing' as home_url %}
+        {% include "partials/_brand_logo.html" with logo_url=home_url brand_label="CareMate" %}
+
+        <nav class="cm-nav-links" aria-label="Main Navigation">
+          <a href="{% url 'landing' %}" class="cm-nav-link {% if active_nav == 'home' %}active{% endif %}">Home</a>
+          <a href="{% url 'appointments' %}" class="cm-nav-link {% if active_nav == 'appointments' %}active{% endif %}">Appointments</a>
+          <a href="{% url 'blog' %}" class="cm-nav-link {% if active_nav == 'blog' %}active{% endif %}">Health Blog</a>
+          <a href="{% url 'reviews' %}" class="cm-nav-link {% if active_nav == 'reviews' %}active{% endif %}">Reviews</a>
+        </nav>
+      </div>
+
+      <div class="cm-nav-actions">
+        {% if user.is_authenticated %}
+          {% if user.is_staff %}
+            <a href="{% url 'admin:index' %}" class="cm-btn-outline">Admin</a>
+          {% endif %}
+          <a href="{% url 'my_appointments' %}" class="cm-btn-outline">My Bookings</a>
+          <form method="post" action="{% url 'logout' %}" style="margin:0;">
+            {% csrf_token %}
+            <button type="submit" class="cm-btn-primary">Logout</button>
+          </form>
+        {% else %}
+          <a href="{% url 'login' %}" class="cm-btn-outline">Login</a>
+          <a href="{% url 'signup' %}" class="cm-btn-primary">Register</a>
+        {% endif %}
+      </div>
+    </div>
+  </header>
+
+  {% if messages %}
+    <div class="cm-toast-wrap">
+      {% for message in messages %}
+        <div class="cm-toast {% if message.tags == 'error' %}cm-toast-error{% else %}cm-toast-success{% endif %}">
+          <span>{{ message }}</span>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  {% block footer %}
+    {% include "partials/_footer.html" %}
+  {% endblock %}
+  {% block scripts %}{% endblock %}
+</body>
+</html>

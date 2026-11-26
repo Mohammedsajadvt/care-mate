@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}CareMate — Health in Your Hands{% endblock %}
+
+{% block content %}
+<section class="cm-hero cm-hero--landing">
+  <div class="cm-hero-left">
+    <div class="cm-hero-content">
+      <h1 class="cm-hero-title">Health in Your<br>Hands.</h1>
+      <p class="cm-hero-subtitle">
+        Take control of your healthcare with CareMate. Book appointments with ease, explore health blogs, and stay on top of your well-being, all in one place.
+      </p>
+      <a href="{% url 'appointments' %}" class="cm-hero-cta">Get Started</a>
+    </div>
+  </div>
+  <div class="cm-hero-right">
+    <img src="{% static 'images/hero_landing.jpg' %}" alt="Smiling dentist caring for a patient in a modern CareMate clinic" />
+  </div>
+</section>
+{% endblock %}
+
+{% block footer %}{% endblock %}

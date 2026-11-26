@@ -1,0 +1,57 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}{% if subtitle %}{{ subtitle }} | {% endif %}{{ title }} | CareMate Admin{% endblock %}
+
+{% block dark-mode-vars %}{% endblock %}
+
+{% block extrastyle %}
+  {{ block.super }}
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{% static 'css/caremate.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/caremate_admin.css' %}" />
+{% endblock %}
+
+{% block header %}
+<header id="header" class="cm-admin-header">
+  <div class="cm-admin-nav-left">
+    <div style="display:flex; align-items:center;">
+      {% url 'admin:index' as admin_home_url %}
+      {% include "partials/_brand_logo.html" with logo_url=admin_home_url brand_label="CareMate" %}
+      <span class="cm-admin-badge">Admin</span>
+    </div>
+
+    {% if has_permission %}
+      <nav class="cm-admin-links" aria-label="Admin Navigation">
+        <a href="{% url 'admin:index' %}" class="cm-nav-link {% if request.path == '/admin/' %}active{% endif %}">Dashboard</a>
+        <a href="{% url 'admin:core_appointment_changelist' %}" class="cm-nav-link {% if '/admin/core/appointment/' in request.path %}active{% endif %}">Appointments</a>
+        <a href="{% url 'admin:core_doctor_changelist' %}" class="cm-nav-link {% if '/admin/core/doctor/' in request.path %}active{% endif %}">Doctors</a>
+        <a href="{% url 'admin:core_review_changelist' %}" class="cm-nav-link {% if '/admin/core/review/' in request.path %}active{% endif %}">Reviews</a>
+        <a href="{% url 'admin:core_blogpost_changelist' %}" class="cm-nav-link {% if '/admin/core/blogpost/' in request.path %}active{% endif %}">Health Blog</a>
+        <a href="{% url 'admin:auth_user_changelist' %}" class="cm-nav-link {% if '/admin/auth/user/' in request.path %}active{% endif %}">Users</a>
+      </nav>
+    {% endif %}
+  </div>
+
+  <div class="cm-admin-userbar">
+    {% if has_permission %}
+      <span class="cm-admin-user-pill">Staff: <strong>{% firstof user.get_short_name user.get_username %}</strong></span>
+      {% if site_url %}
+        <a href="{{ site_url }}" class="cm-btn-outline" style="height:36px; padding:0 16px;">View Site</a>
+      {% endif %}
+      <form id="logout-form" method="post" action="{% url 'admin:logout' %}" style="margin:0;">
+        {% csrf_token %}
+        <button type="submit" class="cm-btn-primary" style="height:36px; padding:0 18px;">Logout</button>
+      </form>
+    {% else %}
+      <a href="{% url 'landing' %}" class="cm-btn-outline" style="height:36px; padding:0 16px;">Back to Site</a>
+    {% endif %}
+  </div>
+</header>
+{% endblock %}
+
+{% block footer %}
+  {% include "partials/_footer.html" %}
+{% endblock %}

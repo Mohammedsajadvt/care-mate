@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Health Blog — CareMate{% endblock %}
+
+{% block content %}
+<section class="cm-hero">
+  <div class="cm-hero-left">
+    <div class="cm-hero-content">
+      <h1 class="cm-hero-title">Your Guide to<br>Wellbeing.</h1>
+      <p class="cm-hero-subtitle">
+        Discover expert advice, wellness tips, and the latest trends in healthcare to guide your journey to better health.
+      </p>
+    </div>
+  </div>
+  <div class="cm-hero-right">
+    <img src="{% static 'images/hero_blog.jpg' %}" alt="Woman meditating peacefully" />
+  </div>
+</section>
+
+<div class="cm-filter-wrap">
+  <div class="cm-filter-card">
+    <h2 class="cm-filter-title">Find Answers to Your Health Questions</h2>
+    <form method="get" action="{% url 'blog' %}" class="cm-filter-row">
+      <div class="cm-filter-group">
+        <label class="cm-filter-label" for="b_category">Category</label>
+        <div class="cm-filter-control">
+          <span class="cm-input-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M4.8 2.3A.3.3 0 1 0 5 2H4a2 2 0 0 0-2 2v5a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6V4a2 2 0 0 0-2-2h-1a.2.2 0 1 0 .3.3"/>
+              <path d="M8 15v1a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6v-4"/>
+              <circle cx="20" cy="10" r="2"/>
+            </svg>
+          </span>
+          <select id="b_category" name="category">
+            <option value="All" {% if selected_category == 'All' %}selected{% endif %}>All</option>
+            {% for cat in categories %}
+              <option value="{{ cat }}" {% if selected_category == cat %}selected{% endif %}>{{ cat }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <div class="cm-filter-group">
+        <label class="cm-filter-label" for="b_date">Date</label>
+        <div class="cm-filter-control">
+          <span class="cm-input-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M5 22h14"/><path d="M5 2h14"/>
+              <path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"/>
+              <path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"/>
+            </svg>
+          </span>
+          <select id="b_date" name="date_range">
+            <option value="All" {% if selected_date_range == 'All' %}selected{% endif %}>Feb-May</option>
+            <option value="Feb-May" {% if selected_date_range == 'Feb-May' %}selected{% endif %}>Feb-May</option>
+            <option value="Jun-Dec" {% if selected_date_range == 'Jun-Dec' %}selected{% endif %}>Jun-Dec</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="cm-filter-group cm-filter-group--wide">
+        <label class="cm-filter-label" for="b_keyword">Keyword</label>
+        <div class="cm-filter-control">
+          <span class="cm-input-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <circle cx="11" cy="11" r="8"/>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+          </span>
+          <input type="text" id="b_keyword" name="keyword" value="{{ keyword }}" placeholder="Search .." />
+        </div>
+      </div>
+
+      <div class="cm-filter-buttons">
+        <button type="submit" class="cm-btn-primary">Search</button>
+        <a href="{% url 'blog' %}" class="cm-btn-tan">Reset</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<section class="cm-section">
+  <div class="cm-section-head">
+    <h2 class="cm-section-title">Health Blog</h2>
+    <p class="cm-section-sub">Read our latest news.</p>
+  </div>
+
+  {% if page_obj.object_list %}
+    <div class="cm-blog-grid">
+      {% for post in page_obj.object_list %}
+        <article class="cm-blog-card">
+          <img class="cm-blog-thumb" src="{% static post.image %}" alt="{{ post.title }}" />
+          <div class="cm-blog-meta">
+            <span class="cm-blog-cat">{{ post.category }}</span>
+            <span style="color:#a1a6a3;">&bull;</span>
+            <span class="cm-blog-date">{{ post.published_date|date:"l, d M Y" }}</span>
+          </div>
+          <h3 class="cm-blog-title">{{ post.title }}</h3>
+          <p class="cm-blog-excerpt">{{ post.excerpt }}</p>
+          <a href="{% url 'blog_detail' post.slug %}" class="cm-read-btn">
+            Read
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="7" y1="17" x2="17" y2="7"/>
+              <polyline points="7 7 17 7 17 17"/>
+            </svg>
+          </a>
+        </article>
+      {% endfor %}
+    </div>
+
+    <div class="cm-pagination">
+      <a class="cm-page-nav {% if not page_obj.has_previous %}disabled{% endif %}"
+         href="{% if page_obj.has_previous %}?page={{ page_obj.previous_page_number }}&category={{ selected_category }}&date_range={{ selected_date_range }}&keyword={{ keyword }}{% else %}#{% endif %}">
+        &lsaquo; Prev
+      </a>
+      {% for num in page_obj.paginator.page_range %}
+        <a class="cm-page-link {% if page_obj.number == num %}active{% endif %}"
+           href="?page={{ num }}&category={{ selected_category }}&date_range={{ selected_date_range }}&keyword={{ keyword }}">
+          {{ num }}
+        </a>
+      {% endfor %}
+      <a class="cm-page-nav {% if not page_obj.has_next %}disabled{% endif %}"
+         href="{% if page_obj.has_next %}?page={{ page_obj.next_page_number }}&category={{ selected_category }}&date_range={{ selected_date_range }}&keyword={{ keyword }}{% else %}#{% endif %}">
+        Next &rsaquo;
+      </a>
+    </div>
+  {% else %}
+    <div style="text-align:center; padding: 48px 20px; background:#f7faf8; border-radius:12px;">
+      <p style="margin:0 0 14px; font-size:16px;">No articles matched your search.</p>
+      <a href="{% url 'blog' %}" class="cm-btn-primary">Reset Filters</a>
+    </div>
+  {% endif %}
+</section>
+{% endblock %}

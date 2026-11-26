@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Reviews — CareMate{% endblock %}
+
+{% block content %}
+<section class="cm-hero">
+  <div class="cm-hero-left">
+    <div class="cm-hero-content">
+      <h1 class="cm-hero-title">Your Feedback<br>Matters.</h1>
+      <p class="cm-hero-subtitle">
+        Share your thoughts on the care you received and help others make informed decisions when booking their appointments. Your review can guide others to better care.
+      </p>
+    </div>
+  </div>
+  <div class="cm-hero-right">
+    <img src="{% static 'images/hero_reviews.jpg' %}" alt="Patients giving thumbs up feedback" />
+  </div>
+</section>
+
+<section class="cm-section">
+  <div class="cm-section-head">
+    <h2 class="cm-section-title">Reviews</h2>
+    <p class="cm-section-sub">Below is a list of doctors who treated you. Click on 'Give Review' to give us your feedback.</p>
+  </div>
+
+  <div class="cm-reviews-stack">
+    {% for item in review_cards %}
+      <article class="cm-review-card">
+        <span class="cm-index-badge">{{ item.index_label }}</span>
+        <img class="cm-review-avatar" src="{% static item.doctor.avatar %}" alt="{{ item.doctor.name }}" />
+
+        <div class="cm-review-info">
+          <h3>{{ item.doctor.name }}</h3>
+          <div class="cm-meta-row" style="margin-bottom:0;">
+            <span class="cm-meta-item">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M4.8 2.3A.3.3 0 1 0 5 2H4a2 2 0 0 0-2 2v5a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6V4a2 2 0 0 0-2-2h-1a.2.2 0 1 0 .3.3"/>
+                <path d="M8 15v1a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6v-4"/>
+                <circle cx="20" cy="10" r="2"/>
+              </svg>
+              {{ item.doctor.specialty }}
+            </span>
+            <span class="cm-meta-item">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M5 22h14"/><path d="M5 2h14"/>
+                <path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"/>
+                <path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"/>
+              </svg>
+              {{ item.doctor.experience_years }} Year{{ item.doctor.experience_years|pluralize }}
+            </span>
+          </div>
+        </div>
+
+        <div>
+          {% if user.is_authenticated %}
+            <button
+              type="button"
+              class="cm-review-btn {% if item.has_review %}cm-review-btn--muted{% else %}cm-review-btn--active{% endif %}"
+              onclick="openReviewModal('{{ item.doctor.id }}', '{{ item.doctor.name|escapejs }}', '{{ item.stars_filled }}', '{{ item.review.comment|default:''|escapejs }}')"
+            >
+              Give Review
+            </button>
+          {% else %}
+            <a
+              href="{% url 'login' %}?next={% url 'reviews' %}"
+              class="cm-review-btn {% if item.has_review %}cm-review-btn--muted{% else %}cm-review-btn--active{% endif %}"
+              style="display:inline-flex; align-items:center; justify-content:center;"
+            >
+              Give Review
+            </a>
+          {% endif %}
+        </div>
+
+        <div class="cm-review-score-box">
+          <div class="cm-review-score-label">Your Review</div>
+          <div class="cm-review-score-value">{{ item.score }}</div>
+          {% include "core/_stars.html" with filled=item.stars_filled %}
+        </div>
+      </article>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- Review Modal -->
+<div id="reviewModal" class="cm-modal-backdrop" onclick="if(event.target===this)closeReviewModal()">
+  <div class="cm-modal">
+    <div class="cm-modal-header">
+      <h2 class="cm-modal-title" id="reviewModalTitle">Give Review</h2>
+      <button type="button" class="cm-modal-close" onclick="closeReviewModal()">&times;</button>
+    </div>
+
+    <form method="post" action="{% url 'submit_review' %}">
+      {% csrf_token %}
+      <input type="hidden" name="doctor_id" id="reviewDoctorId" />
+      <input type="hidden" name="rating" id="reviewRatingInput" value="5" />
+
+      <div class="cm-field">
+        <label class="cm-field-label">Your Rating</label>
+        <div id="starPicker" style="display:flex; gap:8px; cursor:pointer; padding:4px 0;">
+          {% for n in "12345" %}
+            <button type="button" data-val="{{ forloop.counter }}" onclick="setReviewStars({{ forloop.counter }})" style="background:none; border:none; padding:2px; cursor:pointer;">
+              <svg class="picker-star" width="28" height="28" viewBox="0 0 24 24" fill="#e59838" stroke="#e59838" stroke-width="1.5">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+              </svg>
+            </button>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="cm-field">
+        <label class="cm-field-label" for="reviewComment">Feedback Comment</label>
+        <textarea id="reviewComment" name="comment" rows="3" placeholder="Share how your visit went..." style="width:100%; border:1px solid #e2e5e3; border-radius:6px; padding:10px; font-size:13px; outline:none;"></textarea>
+      </div>
+
+      <div style="display:flex; gap:10px; margin-top:14px;">
+        <button type="submit" class="cm-btn-primary" style="flex:1; height:44px;">Submit Review</button>
+        <button type="button" class="cm-btn-tan" style="height:44px;" onclick="closeReviewModal()">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function openReviewModal(doctorId, doctorName, existingRating, existingComment) {
+  document.getElementById('reviewDoctorId').value = doctorId;
+  document.getElementById('reviewModalTitle').textContent = 'Review ' + doctorName;
+  document.getElementById('reviewComment').value = existingComment || '';
+  setReviewStars(parseInt(existingRating, 10) || 5);
+  document.getElementById('reviewModal').classList.add('open');
+}
+
+function closeReviewModal() {
+  document.getElementById('reviewModal').classList.remove('open');
+}
+
+function setReviewStars(val) {
+  document.getElementById('reviewRatingInput').value = val;
+  document.querySelectorAll('#starPicker button').forEach(btn => {
+    const n = parseInt(btn.dataset.val, 10);
+    const svg = btn.querySelector('svg');
+    svg.setAttribute('fill', n <= val ? '#e59838' : 'none');
+  });
+}
+</script>
+{% endblock %}
